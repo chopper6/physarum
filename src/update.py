@@ -27,14 +27,19 @@ def updateR(L,D,R):
 def updateP(Adj, B,P,R,net):
     s = len(P)
     X = [[0 for i in range(s)] for j in range(s)]
+
     for i in range(s):
         for j in range(s):
             if Adj[i,j] == 1:
-                X[i][j] = 1/R[i][j]
-                X[i][i] -= 1/R[i][j] # does this work?
+                    #and B[i] != -1: #ie are nghs and output potential is set to 0
+                X[i][j] = 1/R[i][j]   # poss rev +- in next two lines
+                if B[i] != -1: X[i][i] -= 1/R[i][j]
 
-    soln = linalg.lstsq(X,B)
-    P=soln[0]
+
+    #print("\n about to solve P, X looks like: \n" + str(X) + "\n\n")
+    soln = linalg.solve(X,B)
+    #soln = linalg.lstsq(X,B)
+    P=soln
     #print('\nsoln to p = ' + str(P))
     return P
 

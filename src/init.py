@@ -4,17 +4,17 @@ import numpy as np
 
 def net_and_matrices(num_nodes=8, pr_edge = .5, init_type ='3'):
 
-    net = build_nets.seed(init_type)
+    net = build_nets.seed(init_type, num_nodes, pr_edge)
 
     # MATRIX VERSION
     Adj = nx.adjacency_matrix(net).todense()
-    print('Starting Adj matrix = ' + str(Adj))
+    print('Starting Adj matrix = ' + str(Adj) + "\n\n")
     s = np.shape(Adj)[0]
 
     # EDGE MATRICES
     if init_type == '3': L = [[0,2,0],[2,0,3],[0,3,0]]
     else: L = [[0 for i in range(s)] for j in range(s)]
-    print(L)
+    #print(L)
     D = [[0 for i in range(s)] for j in range(s)]
     Q = [[0 for i in range(s)] for j in range(s)]
     R = [[0 for i in range(s)] for j in range(s)]
