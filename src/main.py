@@ -1,57 +1,35 @@
 import networkx as nx, random as rd, numpy as np
-import init, update
+import init, update, stats, output, plot
 
 
-def run():
-    num_iters = 80
-    net, Adj ,L, R, D, Q, B, P = init.net_and_matrices(num_nodes=16, pr_edge = .5, init_type='random')
-
+def run(output_dirr):
+    num_iters = 200
+    net, Adj ,L, R, D, Q, B, P = init.net_and_matrices(num_nodes=80, pr_edge = .4, init_type='random')
+    output.init_output(output_dirr)
     #print("\nAT START: \n")
+
     #output(P,D,R,L)
 
     for i in range(num_iters):
         R, P, Q, D = update.update_net(net,Adj,L, R, D, Q, B, P)
-        #if i % 10 == 0: print("potentials at iter " + str(i) + ' = ' + str(P))
+        phys_path, nx_path = stats.extract_shortest_path(net, D, L, B)
 
-    #print("\nAT END: \n")
-    #output(P,D,R,L)
+        if i%20 == 0: print("2 paths: " + str(nx_path) + ", " + str(phys_path))
 
-    compare_shortest_path(net, D, L, B)
+        true_pos, false_pos, true_neg, false_neg = stats.score(phys_path, nx_path, net, output_dirr + "/accuracy.csv")
+        output.write_acc(true_pos, false_pos, true_neg, false_neg, i, output_dirr)
 
-
-
-
-def compare_shortest_path(net, D, L, B):
-
-    for i in range(len(B)):
-        if B[i] == 1: source = i
-        elif B[i] == -1: target =i
-    assert(source is not None and target is not None)
-
-    weighted_net = nx.from_numpy_matrix(np.array(L))
-    nx_path = nx.shortest_path(weighted_net, source, target)
-    print("Networkx calculates shortest path as: " + str(nx_path))
-
-    phys_path = []
-    D_incld = []
-    for i in range(len(D)):
-        for j in range(len(D)):
-            if D[i][j] > .1:
-                phys_path.append(i) #i.e cut off edges to some threshold
-                phys_path.append(j)
-
-    phys_path = np.unique(phys_path)
-    print("Physarum simulation calculates shortest path as: " + str(phys_path))
-    print("Note path may be out of order.")
-
-def output(P,D,R,L):
-    print("\nPotentials: " + str(P))
-    print("\nLengths: " + str(L))
-    print("\nResistances: " + str(R))
-    print("\nDiameter: " + str(D))
-
+    plot.accuracy(output_dirr)
 
 if __name__ == "__main__":
+
+    #TODO: generally poor convergence; output should be avg of many runs
+
+    output_dirr = "C:/Users/Crbn/Documents/Code/physarum/test"
+    #This is my local path and needs to be changed for other users
     print("Starting...\n")
-    run()
+    #np.warnings.filterwarnings('ignore')
+    #print("\nWARNING: all numpy warnings are currently suppressed, look at main function of main.py to change this.\n")
+
+    run(output_dirr)
     print("\n...Done")
