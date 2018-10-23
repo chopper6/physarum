@@ -34,3 +34,11 @@ def import_data(input_file):
 
     # print_data(data, titles)
     return data, titles
+
+def gen_avg_data(data):
+    # TODO: finish and put in larger scheme
+    # given many reps of same sim, avg features who are at the same iteration
+    avg_data = [[None for i in range(len(data)-1)] for j in range(len(data[0]))] #may need to reverse
+    for j in range(len(data)):
+        for i in range(len(data[0])):
+            avg_data[data[0][i]][j] += data[i][j] #i think

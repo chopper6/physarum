@@ -8,7 +8,7 @@ def net_and_matrices(num_nodes=8, pr_edge = .5, init_type ='3'):
 
     # MATRIX VERSION
     Adj = nx.adjacency_matrix(net).todense()
-    print('Starting Adj matrix = ' + str(Adj) + "\n\n")
+    #print('Starting Adj matrix = ' + str(Adj) + "\n\n")
     s = np.shape(Adj)[0]
 
     # EDGE MATRICES

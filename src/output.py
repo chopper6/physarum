@@ -1,6 +1,8 @@
 import os
 
-def write_acc(true_pos, false_pos, true_neg, false_neg, iter, output_dir):
+def write_confusion(true_pos, false_pos, true_neg, false_neg, iter, output_dir):
+    # NOT USED
+
     with open(output_dir+"/accuracy.csv",'a') as file:
         file.write(str(iter) +"," + str(true_pos) + "," + str(false_pos) + "," + str(true_neg) + "," + str(false_neg) + "\n")
 
