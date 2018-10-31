@@ -10,7 +10,7 @@ def run(num_iters, num_reps, output_dirr, Qfunction='default', gamma=2, num_node
 
         net, Adj ,L, R, D, Q, B, P = init.net_and_matrices(num_nodes=num_nodes, pr_edge = pr_edge, init_type='random')
         output.init_output(output_dirr)
-
+        converged = False
         final_iter = num_iters
         for i in range(num_iters):
             R, P, Q, D, converged = update.update_net(Adj,L, R, D, Q, B, P, Qfunction=Qfunction, gamma=gamma)
@@ -27,8 +27,11 @@ def run(num_iters, num_reps, output_dirr, Qfunction='default', gamma=2, num_node
         if correct:
             accuracy += 1
             convergence_iterations += final_iter
+        elif not converged: convergence_iterations += num_iters
 
-    if accuracy != 0: convergence_iterations /= accuracy #accuracy is just #times converged right now
+    #if accuracy != 0: convergence_iterations /= accuracy #accuracy is just #times converged right now
+
+    convergence_iterations /= num_reps
     accuracy /= num_reps
     if verbose:
         print("Accuracy = " + str(accuracy))
@@ -40,16 +43,16 @@ def run(num_iters, num_reps, output_dirr, Qfunction='default', gamma=2, num_node
 
 def Qfn_experiment(gammas, output_dirr, verbose=False):
 
-    set_titles = ['Medium Dense', 'Large Sparse', 'Large Dense']
+    set_titles = ['Small Dense', 'Large Sparse']
     #num_iters, num_reps = 200,20
-    num_nodes, pr_edge = [80,200,200], [.8,.2,.8]
+    num_nodes, pr_edge = [200, 40], [.2,.6]
     assert(len(set_titles) == len(num_nodes))
 
     #num_nodes, pr_edge = [8, 8, 20, 20], [.2, .8, .2, .8]
 
     for i in range(len(set_titles)):
         print("\nStarting set " + str(set_titles[i]))
-        num_iters = int(num_nodes[i]*pr_edge[i])
+        num_iters = int(num_nodes[i]*pr_edge[i]) #TODO: add *4 for final run
         num_reps = int(num_iters)
 
         gamma_acc = [None for i in range(len(gammas))]
@@ -64,18 +67,22 @@ def Qfn_experiment(gammas, output_dirr, verbose=False):
         else:
             print("Testing control")
         control_acc, control_convg = run(num_iters, num_reps, output_dirr, num_nodes=num_nodes[i], pr_edge=pr_edge[i])
-        plot.gamma_run(output_dirr, set_titles[i], gammas, gamma_acc, gamma_convg, control_acc, control_convg)
+        plot.gamma_run(output_dirr, set_titles[i], gammas, gamma_acc, gamma_convg, control_acc, control_convg, num_iters)
 
 
 if __name__ == "__main__":
 
-    #TODO: figs for results, does not account for mult poss shortest paths
+    # TODO: figs for results; does not account for mult poss shortest paths (unlikely with L in real)
+    # could chalk it up to poor convergence time...but seems unlikely
+    # TODO: instead of optimizing, try just run once for num_nodes = [40, 400] x pr_edge = [.2,.4]
 
-    output_dirr = "C:/Users/Crbn/Documents/Code/physarum/test"
+    output_dirr = "C:/Users/Crbn/Documents/Code/physarum/results"
     #This is my local path and needs to be changed for other users
 
     print("Starting...\n")
 
     gammas = [1, 1.2, 1.4, 1.6, 1.8, 2, 3]
     Qfn_experiment(gammas, output_dirr)
+
+    #run(200, 20, output_dirr, num_nodes=200, pr_edge=.4, verbose=True)
     print("\n...Done")

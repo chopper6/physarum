@@ -35,9 +35,9 @@ def import_data(input_file):
     # print_data(data, titles)
     return data, titles
 
-def gamma_run(output_dir, set_title, gammas, gamma_acc, gamma_convg, control_acc, control_convg):
+def gamma_run(output_dir, set_title, gammas, gamma_acc, gamma_convg, control_acc, control_convg, max_iters):
     plt.plot(gammas, gamma_acc, color="red", label='Alternative')
-    plt.plot(gammas, [control_acc for i in range(len(gammas))], color='blue', label='Control', alpha=.7)
+    plt.plot(gammas, [control_acc for i in range(len(gammas))], color='blue', label='Control', linestyle = '-.', alpha=.7)
     plt.title("Accuracy for " + str(set_title))
     plt.legend()
     plt.xlabel("Gamma")
@@ -46,11 +46,13 @@ def gamma_run(output_dir, set_title, gammas, gamma_acc, gamma_convg, control_acc
     plt.clf()
 
     plt.plot(gammas, gamma_convg, color="red", label='Alternative')
-    plt.plot(gammas, [control_convg for i in range(len(gammas))], color='blue', label='Control', alpha=.7)
+    plt.plot(gammas, [control_convg for i in range(len(gammas))], color='blue', label='Control', linestyle = '-.', alpha=.7)
+    plt.plot(gammas, [max_iters for i in range(len(gammas))], color='grey', linestyle='--', alpha=.5, label='Max Iterations allowed')
+
     plt.title("Convergence Time for " + str(set_title))
     plt.legend()
     plt.xlabel("Gamma")
-    plt.ylabel("Average Number of Iterations when correct")
+    plt.ylabel("Average Iterations to Convergence") #note that NOT converging counts as Max Iters
     plt.savefig(output_dir + "/"  + str(set_title) + "_convergence")
     plt.clf()
 
