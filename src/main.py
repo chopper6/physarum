@@ -28,34 +28,54 @@ def run(num_iters, num_reps, output_dirr, Qfunction='default', gamma=2, num_node
             accuracy += 1
             convergence_iterations += final_iter
 
-    convergence_iterations /= accuracy #accuracy is just #times converged right now
+    if accuracy != 0: convergence_iterations /= accuracy #accuracy is just #times converged right now
     accuracy /= num_reps
-    print("Accuracy = " + str(accuracy))
-    print("Mean convergence iterations = " + str(convergence_iterations))
+    if verbose:
+        print("Accuracy = " + str(accuracy))
+        print("Mean convergence iterations = " + str(convergence_iterations))
     #plot.accuracy(output_dirr)
 
+    return accuracy, convergence_iterations
 
-def Qfn_experiment(gammas, output_dirr):
 
-    num_iters, num_reps = 200,20
-    num_nodes, pr_edge = 80, .4
+def Qfn_experiment(gammas, output_dirr, verbose=False):
 
-    for gamma in gammas:
-        print("\n\n##########################################   GAMMA = "  +str(gamma) + "   ##########################################\n")
-        run(num_iters, num_reps, output_dirr, Qfunction='alt', gamma=gamma, num_nodes=num_nodes, pr_edge=pr_edge)
+    set_titles = ['Medium Dense', 'Large Sparse', 'Large Dense']
+    #num_iters, num_reps = 200,20
+    num_nodes, pr_edge = [80,200,200], [.8,.2,.8]
+    assert(len(set_titles) == len(num_nodes))
 
-    print("\n\n##########################################   CONTROL   ##########################################\n")
-    run(num_iters, num_reps, output_dirr, num_nodes=num_nodes, pr_edge=pr_edge)
+    #num_nodes, pr_edge = [8, 8, 20, 20], [.2, .8, .2, .8]
+
+    for i in range(len(set_titles)):
+        print("\nStarting set " + str(set_titles[i]))
+        num_iters = int(num_nodes[i]*pr_edge[i])
+        num_reps = int(num_iters)
+
+        gamma_acc = [None for i in range(len(gammas))]
+        gamma_convg = [None for i in range(len(gammas))]
+
+        for g in range(len(gammas)):
+            if verbose: print("\n\n##########################################   GAMMA = "  +str(gammas[g]) + "   ##########################################\n")
+            else:print("Testing gamma = " + str(gammas[g]))
+            gamma_acc[g], gamma_convg[g] = run(num_iters, num_reps, output_dirr, Qfunction='alt', gamma=gammas[g], num_nodes=num_nodes[i], pr_edge=pr_edge[i])
+
+        if verbose: print("\n\n##########################################   CONTROL   ##########################################\n")
+        else:
+            print("Testing control")
+        control_acc, control_convg = run(num_iters, num_reps, output_dirr, num_nodes=num_nodes[i], pr_edge=pr_edge[i])
+        plot.gamma_run(output_dirr, set_titles[i], gammas, gamma_acc, gamma_convg, control_acc, control_convg)
+
 
 if __name__ == "__main__":
 
-    #TODO: poor convergence, figs for results
+    #TODO: figs for results, does not account for mult poss shortest paths
 
     output_dirr = "C:/Users/Crbn/Documents/Code/physarum/test"
     #This is my local path and needs to be changed for other users
 
     print("Starting...\n")
 
-    gammas = [1.5,2,4,8]
+    gammas = [1, 1.2, 1.4, 1.6, 1.8, 2, 3]
     Qfn_experiment(gammas, output_dirr)
     print("\n...Done")

@@ -41,6 +41,8 @@ def extract_shortest_path(D, L, B):
 
     weighted_net = nx.from_numpy_matrix(np.array(L, dtype=[('weight', float)]))
     nx_path = nx.shortest_path(weighted_net, source, target, weight = 'weight')
+    #TODO: nx_path could have mult shortest paths, figure out how to handle in general
+
     if verbose: print("Networkx calculates shortest path as: " + str(nx_path))
 
     phys_path, diams = [], []

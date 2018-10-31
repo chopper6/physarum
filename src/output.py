@@ -10,8 +10,8 @@ def init_output(output_dir):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    with open(output_dir + "/accuracy.csv", 'w') as file:
-        file.write("Iteration, True Positives, False Positives, True Negatives, False Negatives\n")
+    #with open(output_dir + "/accuracy.csv", 'w') as file:
+    #    file.write("Iteration, True Positives, False Positives, True Negatives, False Negatives\n")
 
 
 

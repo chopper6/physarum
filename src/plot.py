@@ -35,6 +35,26 @@ def import_data(input_file):
     # print_data(data, titles)
     return data, titles
 
+def gamma_run(output_dir, set_title, gammas, gamma_acc, gamma_convg, control_acc, control_convg):
+    plt.plot(gammas, gamma_acc, color="red", label='Alternative')
+    plt.plot(gammas, [control_acc for i in range(len(gammas))], color='blue', label='Control', alpha=.7)
+    plt.title("Accuracy for " + str(set_title))
+    plt.legend()
+    plt.xlabel("Gamma")
+    plt.ylabel("Percent Correct")
+    plt.savefig(output_dir + "/"  + str(set_title) + "_accuracy")
+    plt.clf()
+
+    plt.plot(gammas, gamma_convg, color="red", label='Alternative')
+    plt.plot(gammas, [control_convg for i in range(len(gammas))], color='blue', label='Control', alpha=.7)
+    plt.title("Convergence Time for " + str(set_title))
+    plt.legend()
+    plt.xlabel("Gamma")
+    plt.ylabel("Average Number of Iterations when correct")
+    plt.savefig(output_dir + "/"  + str(set_title) + "_convergence")
+    plt.clf()
+
+
 def gen_avg_data(data):
     # TODO: finish and put in larger scheme
     # given many reps of same sim, avg features who are at the same iteration
